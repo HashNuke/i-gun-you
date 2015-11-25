@@ -16,7 +16,8 @@ defmodule IGunYou.Router do
   scope "/", IGunYou do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    get "/", GamesController, :index
+    get "/games/:slug", GamesController, :show
   end
 
   # Other scopes may use custom stacks.
