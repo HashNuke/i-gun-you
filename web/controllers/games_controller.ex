@@ -1,12 +1,21 @@
 defmodule IGunYou.GamesController do
   use IGunYou.Web, :controller
+  alias IGunYou.Game
 
   def index(conn, _params) do
-    game = %IGunYou.Game{}
-    render conn, "index.html", game: game
+    game_changeset = %Game{} |> Game.changeset
+    render conn, "index.html", game_changeset: game_changeset
   end
 
-  def show(conn, %{"slug" => game_slug} = params) do
-    render conn, "show.html", game_slug: game_slug
+  def create(conn, params) do
+    game = Game.new(params)
+    {:ok, game} = Repo.insert game
+
+    redirect conn, to: "/games/#{game.slug}"
+  end
+
+  def show(conn, params) do
+    game = Repo.one(from g in Game, where: g.slug == ^params["id"] , select: g)
+    render conn, "show.html", game: game
   end
 end

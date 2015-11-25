@@ -4,6 +4,7 @@ defmodule IGunYou.Repo.Migrations.CreateGame do
   def change do
     create table(:games) do
       add :slug, :text
+      add :private, :boolean
 
       timestamps
     end

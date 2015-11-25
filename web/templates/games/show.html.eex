@@ -1,4 +1,4 @@
 <div>
-  <h1>GET /games/:123abc</h1>
-  <h2><%= @game_slug %></h2>
+  <h1>GET /games/<%= @game.slug %></h1>
+  <h2><%= @game.slug %></h2>
 </div>
