@@ -20,9 +20,17 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
 
 // import socket from "./socket"
 
-import Game from "./game"
+import Game   from "./game"
+import World  from "./game/world"
+import Player from "./game/player"
 
 window.onload = function() {
-  window.game = new Game();
-  game.start();
+
+  // get player skin here
+  var textureLoader = new THREE.TextureLoader();
+  textureLoader.load("/images/steve.png", (texture)=> {
+    var player = new Player(texture, 1);
+    window.game = new Game(player);
+    window.world = new World(game, {debug: true});
+  });
 };
