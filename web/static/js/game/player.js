@@ -1,80 +1,71 @@
-class Character {
+class Player {
 
   constructor(skinUrl, scale=1) {
     this.skinUrl = skinUrl;
     this.scale = scale;
 
-    this.setDefaults();
-
-    this.model = new THREE.Object3D()
-    this.createParts();
-
-    return this.model;
-  }
-
-
-  setDefaults () {
     this.sizes = {
       headWidth: 8, headHeight: 8, headDepth: 8,
       bodyWidth: 8, bodyHeight: 12, bodyDepth: 4,
       armWidth: 4, armHeight: 12, armDepth: 4
     };
+
+
+    var textureLoader = new THREE.TextureLoader();
+    textureLoader.load(skinUrl, (texture)=> {
+      texture.magFilter  = THREE.NearestFilter
+      texture.minFilter  = THREE.NearestFilter
+
+      var material = new THREE.MeshLambertMaterial({
+        map: texture,
+        side: THREE.DoubleSide
+      })
+
+      this.createModel(material);
+    });
+
+    return this;
   }
 
-
-  createParts() {
+  createModel(material) {
+    this.model = new THREE.Object3D()
     this.model.parts = {}
-    var material = this.createMaterial();
 
-    var head = this.createHead()
+    var head = this.createHead(material, this.scale)
     this.model.parts.head = head
     this.model.add(head)
 
-    var torso = this.createBody()
+    var torso = this.createTorso(material, this.scale)
     this.model.parts.torso = torso
     this.model.add(torso)
 
-    var leftHand = this.createLeftHand()
+    var leftHand = this.createLeftHand(material, this.scale)
     this.model.parts.leftHand = leftHand
     this.model.add(leftHand)
 
-    var rightHand = this.createRightHand()
+    var rightHand = this.createRightHand(material, this.scale)
     this.model.parts.rightHand = rightHand
     this.model.add(rightHand)
 
-    var leftLeg = this.createLeftLeg()
+    var leftLeg = this.createLeftLeg(material, this.scale)
     this.model.parts.leftLeg = leftLeg
     this.model.add(leftLeg)
 
-    var rightLeg = this.createRightLeg()
+    var rightLeg = this.createRightLeg(material, this.scale)
     this.model.parts.rightLeg = rightLeg
     this.model.add(rightLeg)
 
-    var gunBarrel = this.createGunBarrel()
+    var gunBarrel = this.createGunBarrel(this.scale)
     this.model.parts.gunBarrel = gunBarrel
     this.model.add(gunBarrel)
 
-    var gunHandle = this.createGunHandle()
+    var gunHandle = this.createGunHandle(this.scale)
     this.model.parts.gunHandle = gunHandle
     this.model.add(gunHandle)
 
-    this.model.parts.rightHand.rotation.x = 4.8
-    this.model.name = "character"
-  }
-
-
-  createMaterial() {
-    var texture = THREE.ImageUtils.loadTexture(this.skinUrl)
-    texture.magFilter  = THREE.NearestFilter
-    texture.minFilter  = THREE.NearestFilter
-
-    var material = new THREE.MeshLambertMaterial({
-      map: texture,
-      side: THREE.DoubleSide
-    })
-
-    return material;
-  }
+    this.model.parts.rightHand.rotation.x = 4.8;
+    this.model.name = "character";
+  };
 
 
   update(now) {
@@ -89,20 +80,21 @@ class Character {
   }
 
 
-  createCube(width, height, depth) {
+  createCube(width, height, depth, material) {
     var geometry = new THREE.BoxGeometry(width, height, depth, 1, 1, 1)
     return(new THREE.Mesh(geometry, this.material));
   }
 
 
-  createHead() {
+  createHead(material, scale) {
     var obj = this.createCube(
-      this.sizes.headWidth  * this.scale,
-      this.sizes.headHeight * this.scale,
-      this.sizes.headDepth  * this.scale
+      this.sizes.headWidth  * scale,
+      this.sizes.headHeight * scale,
+      this.sizes.headDepth  * scale,
+      material
     )
 
-    obj.position = this.headPosition()
+    obj.position.set( this.headPosition(scale) );
 
     this.mapUv(obj, 0, 16, 24, 24, 16) // left
     this.mapUv(obj, 1,  0, 24,  8, 16) // right
@@ -113,10 +105,31 @@ class Character {
     return obj;
   }
 
-  createHand() {
-    var width  = this.sizes.armWidth * this.scale;
-    var height = this.sizes.armHeight * this.scale;
-    var depth  = this.sizes.armDepth * this.scale;
+
+  createTorso(material, scale) {
+    var obj = this.createCube(
+      this.sizes.bodyWidth  * scale,
+      this.sizes.bodyHeight * scale,
+      this.sizes.bodyDepth  * scale,
+      material
+    );
+
+    obj.position.set( this.bodyPosition(scale) );
+
+    this.mapUv(obj, 0, 28, 12, 32,  0)  // left
+    this.mapUv(obj, 1, 16, 12, 20,  0)  // right
+    this.mapUv(obj, 2, 20, 16, 28, 12)  // top
+    this.mapUv(obj, 3, 28, 16, 32, 12)  // bottom
+    this.mapUv(obj, 4, 20, 12, 28,  0)  // front
+    this.mapUv(obj, 5, 32, 12, 40,  0)  // back
+    return obj;
+  }
+
+
+  createHand(material, scale) {
+    var width  = this.sizes.armWidth * scale;
+    var height = this.sizes.armHeight * scale;
+    var depth  = this.sizes.armDepth * scale;
 
     var geometry = new THREE.BoxGeometry(width, height, depth, 1, 1, 1);
     var translationMatrix = new THREE.Matrix4().makeTranslation(0, -height/2 + width/2, 0);
@@ -127,10 +140,10 @@ class Character {
   }
 
 
-  createLeg() {
-    var width  = this.sizes.armWidth  * this.scale;
-    var height = this.sizes.armHeight * this.scale;
-    var depth  = this.sizes.armDepth  * this.scale;
+  createLeg(material, scale) {
+    var width  = this.sizes.armWidth  * scale;
+    var height = this.sizes.armHeight * scale;
+    var depth  = this.sizes.armDepth  * scale;
 
     var geometry = new THREE.BoxGeometry(width, height, depth, 1, 1, 1)
     geometry.applyMatrix( new THREE.Matrix4().makeTranslation(0, -height/2, 0) )
@@ -138,9 +151,9 @@ class Character {
   }
 
 
-  createRightHand() {
-    var obj = this.createHand()
-    obj.position = this.leftHandPosition()
+  createRightHand(material, scale) {
+    var obj = this.createHand(material, scale)
+    obj.position.set( this.leftHandPosition(scale) );
 
     this.mapUv(obj, 0, 44, 12, 40,  0)  // right
     this.mapUv(obj, 1, 52, 12, 48,  0)  // left
@@ -152,23 +165,23 @@ class Character {
   }
 
 
-  createLeftHand() {
-    var obj = this.createHand()
-    obj.position = this.rightHandPosition()
+  createLeftHand(material, scale) {
+    var obj = this.createHand(material, scale);
+    obj.position.set( this.rightHandPosition(scale) );
 
-    this.mapUv(obj, 0, 48, 12, 52,  0)  // right
-    this.mapUv(obj, 1, 40, 12, 44,  0)  // left
-    this.mapUv(obj, 2, 44, 16, 48, 12)  // top
-    this.mapUv(obj, 3, 48, 16, 52, 12)  // bottom
-    this.mapUv(obj, 4, 44, 12, 48,  0)  // front
-    this.mapUv(obj, 5, 52, 12, 56,  0)  // back
+    this.mapUv(obj, 0, 48, 12, 52,  0);  // right
+    this.mapUv(obj, 1, 40, 12, 44,  0);  // left
+    this.mapUv(obj, 2, 44, 16, 48, 12);  // top
+    this.mapUv(obj, 3, 48, 16, 52, 12);  // bottom
+    this.mapUv(obj, 4, 44, 12, 48,  0);  // front
+    this.mapUv(obj, 5, 52, 12, 56,  0);  // back
     return obj;
   }
 
 
-  createRightLeg() {
-    obj = this.createLeg()
-    obj.position = this.leftLegPosition()
+  createRightLeg(material, scale) {
+    var obj = this.createLeg(material, scale)
+    obj.position.set( this.leftLegPosition(scale) );
 
     this.mapUv(obj, 0,  4, 12,  0,  0)  // left
     this.mapUv(obj, 1, 12, 12,  8,  0)  // right
@@ -179,9 +192,9 @@ class Character {
     return obj;
   }
 
-  createLeftLeg() {
-    var obj = this.createLeg();
-    obj.position = this.rightLegPosition();
+  createLeftLeg(material, scale) {
+    var obj = this.createLeg(material, scale);
+    obj.position.set( this.rightLegPosition(scale) );
 
     this.mapUv(obj, 0,  8, 12, 12,  0)  // right
     this.mapUv(obj, 1,  0, 12,  4,  0)  // left
@@ -193,21 +206,21 @@ class Character {
   }
 
 
-  createGunBarrel() {
+  createGunBarrel(scale) {
     var material = new THREE.MeshBasicMaterial({color: 0x333333});
     var geometry = new THREE.BoxGeometry(
-      2 * this.scale,
-      2 * this.scale,
-      8 * this.scale
+      2 * scale,
+      2 * scale,
+      8 * scale
     );
 
 
     var obj = new THREE.Mesh(geometry, material);
-    obj.position = {
-      x: -5 * this.scale,
-      y: 24 * this.scale,
-      z: 12 * this.scale
-    };
+    obj.position.set({
+      x: -5 * scale,
+      y: 24 * scale,
+      z: 12 * scale
+    });
 
     return obj;
   }
@@ -223,11 +236,11 @@ class Character {
     var material = new THREE.MeshBasicMaterial({color: 0x333333});
     var obj = new THREE.Mesh(geometry, material);
 
-    obj.position = {
+    obj.position.set({
       x: -5 * this.scale,
       y: 22 * this.scale,
       z: 10 * this.scale
-    }
+    });
 
     return(obj);
   }
@@ -245,28 +258,28 @@ class Character {
   }
 
 
-  bodyPosition() {
+  bodyPosition(scale) {
     var x = 0,
         y = (this.sizes.bodyHeight/2) + this.sizes.armHeight,
         z = 0;
 
     return({
-      x: x * this.scale,
-      y: y * this.scale,
-      z: z * this.scale
+      x: x * scale,
+      y: y * scale,
+      z: z * scale
     });
   }
 
 
-  leftLegPosition() {
+  leftLegPosition(scale) {
     var x = this.sizes.armWidth/2,
         y = this.sizes.armHeight,
         z = 0
 
     return({
-      x: x * -1 * this.scale,
-      y: y * this.scale,
-      z: z * this.scale
+      x: x * -1 * scale,
+      y: y * scale,
+      z: z * scale
     })
   }
 
@@ -277,37 +290,37 @@ class Character {
         z = 0
 
     return({
-      x: x * this.scale,
-      y: y * this.scale,
-      z: z * this.scale
+      x: x * scale,
+      y: y * scale,
+      z: z * scale
     });
   }
 
 
-  rightHandPosition() {
+  rightHandPosition(scale) {
     var sizes = this.sizes;
     var x = (sizes.armWidth/2) + (sizes.bodyWidth/2),
         y = sizes.armHeight + sizes.bodyHeight - (sizes.armWidth/2),
         z = 0
 
     return({
-      x: x * this.scale,
-      y: y * this.scale,
-      z: z * this.scale
+      x: x * scale,
+      y: y * scale,
+      z: z * scale
     });
   }
 
 
-  leftHandPosition() {
+  leftHandPosition(scale) {
     var sizes = this.sizes;
     var x = (sizes.armWidth/2) + (sizes.bodyWidth/2),
-        y = sizes.armHeight + sizes.bodyHeight - (sizes.armWidth/2)
+        y = sizes.armHeight + sizes.bodyHeight - (sizes.armWidth/2),
         z = 0;
 
     return({
-      x: x * -1 * this.scale,
-      y: y * this.scale,
-      z: z * this.scale
+      x: x * -1 * scale,
+      y: y * scale,
+      z: z * scale
     })
   }
 
@@ -322,9 +335,11 @@ class Character {
     UVs[1].x = x1 * tileUvWeight;  UVs[1].y = y2 * tileUvHeight;
     UVs[2].x = x2 * tileUvWeight;  UVs[2].y = y1 * tileUvHeight;
 
-    UVs      = geometry.faceVertexUvs[0][faceIndex * 2 + 1];
+    UVs = geometry.faceVertexUvs[0][faceIndex * 2 + 1];
     UVs[0].x = x1 * tileUvWeight;  UVs[0].y = y2 * tileUvHeight;
     UVs[1].x = x2 * tileUvWeight;  UVs[1].y = y2 * tileUvHeight;
     UVs[2].x = x2 * tileUvWeight;  UVs[2].y = y1 * tileUvHeight;
   }
 }
+
+export default Player;

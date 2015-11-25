@@ -23,5 +23,6 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
 import Game from "./game"
 
 window.onload = function() {
-  new Game();
+  window.game = new Game();
+  game.start();
 };

@@ -1,11 +1,12 @@
 class World {
 
-  constructor() {
+  constructor(game) {
+    this.game = game;
     this.setupCamera();
     this.setupRenderer();
     this.setupScene();
 
-    this.camera.position.z = 5;
+    this.camera.position.z = 50;
 
     this.animate();
   }
@@ -19,6 +20,7 @@ class World {
     this.cube = new THREE.Mesh( geometry, material );
 
     this.scene.add( this.cube );
+    console.log(this.cube.position);
   }
 
 
@@ -40,6 +42,10 @@ class World {
     this.render();
     this.cube.rotation.x += 0.1;
     this.cube.rotation.y += 0.1;
+
+    // TODO do only if player not dead
+    this.game.player.update();
+    this.camera.position.set(0,100,0); this.camera.lookAt(this.scene.position);
   }
 
 
@@ -48,4 +54,4 @@ class World {
   }
 }
 
-export default World
+export default World;

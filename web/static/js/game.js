@@ -1,11 +1,16 @@
-import World from "./world"
+import World from "./game/world"
+import Player from "./game/player"
 
 class Game {
   constructor() {
     console.log("game started");
-    new World();
+  }
+
+
+  start() {
+    this.player = new Player("/images/joker.png", 1);
+    this.world = new World(this);
   }
 }
 
-
-export default Game
+export default Game;
