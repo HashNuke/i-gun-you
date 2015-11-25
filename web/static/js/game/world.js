@@ -60,7 +60,7 @@ class World {
     this.game.player.model.rotation.y += 0.05;
 
     // TODO do only if player not dead
-    this.game.player.update();
+    // this.game.player.update(new Date());
     //this.camera.position.set(0,100,0); this.camera.lookAt(this.scene.position);
   }
 

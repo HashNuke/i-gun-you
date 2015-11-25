@@ -134,7 +134,7 @@ class Player {
   }
 
 
-  createRightHand(material, scale) {
+  createLeftHand(material, scale) {
     var sizes = this.sizes;
     var obj = this.createHand(material, scale)
 
@@ -154,11 +154,11 @@ class Player {
   }
 
 
-  createLeftHand(material, scale) {
+  createRightHand(material, scale) {
     var sizes = this.sizes;
     var obj = this.createHand(material, scale);
 
-    var xPos = (sizes.armWidth/2) + (sizes.bodyWidth/2) * -1,
+    var xPos = (sizes.armWidth/2) + (sizes.bodyWidth) * -1,
         yPos = sizes.armHeight + sizes.bodyHeight - (sizes.armWidth/2),
         zPos = 0;
     obj.position.set(xPos * scale, yPos * scale, zPos * scale);
