@@ -1,5 +1,6 @@
 defmodule IGunYou.Game do
   use IGunYou.Web, :model
+  @derive {Phoenix.Param, key: :slug}
 
   schema "games" do
     field :slug, :string

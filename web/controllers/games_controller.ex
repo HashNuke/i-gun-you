@@ -11,7 +11,7 @@ defmodule IGunYou.GamesController do
     game = Game.new(params)
     {:ok, game} = Repo.insert game
 
-    redirect conn, to: "/games/#{game.slug}"
+    redirect conn, to: games_path(conn, :show, game)
   end
 
   def show(conn, params) do
