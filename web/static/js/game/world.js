@@ -58,7 +58,7 @@ class World {
     // this.cube.rotation.x += 0.1;
     // this.cube.rotation.y += 0.05;
 
-    this.game.player.model.rotation.y += 0.05;
+    this.game.player.model.rotation.y += 0.025;
 
     // TODO do only if player not dead
     this.game.player.update(new Date());

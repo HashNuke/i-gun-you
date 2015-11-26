@@ -1,7 +1,8 @@
 class Player {
 
-  constructor(texture, scale=1) {
+  constructor(texture, scale=1, options={}) {
     this.scale = scale;
+    this.options = {};
 
     this.sizes = {
       headWidth: 8, headHeight: 8, headDepth: 8,
@@ -26,46 +27,66 @@ class Player {
 
     var head = this.createHead(material, this.scale);
     head.name = "head";
-    this.model.parts.head = head
     this.model.add(head);
 
-
     var torso = this.createTorso(material, this.scale);
-    this.model.parts.torso = torso;
     torso.name = "torso";
     this.model.add(torso);
 
-    var leftHand = this.createLeftHand(material, this.scale)
+    var leftLeg = this.createLeftLeg(material, this.scale);
+    leftLeg.name = "leftLeg";
+    this.model.add(leftLeg);
+
+    var rightLeg = this.createRightLeg(material, this.scale);
+    rightLeg.name = "rightLeg";
+    this.model.add(rightLeg);
+
+    var leftHand = this.createLeftHand(material, this.scale);
     leftHand.name = "leftHand";
-    this.model.parts.leftHand = leftHand;
     this.model.add(leftHand);
+
+    var rightHandWithGun = new THREE.Object3D();
 
     var rightHand = this.createRightHand(material, this.scale);
     rightHand.name = "rightHand";
-    this.model.parts.rightHand = rightHand;
-    this.model.add(rightHand);
+    rightHandWithGun.add(rightHand);
 
-    var leftLeg = this.createLeftLeg(material, this.scale)
-    leftLeg.name = "leftLeg";
-    this.model.parts.leftLeg = leftLeg;
-    this.model.add(leftLeg);
-
-    var rightLeg = this.createRightLeg(material, this.scale)
-    rightLeg.name = "rightLeg";
-    this.model.parts.rightLeg = rightLeg;
-    this.model.add(rightLeg);
-
-    var gunBarrel = this.createGunBarrel(this.scale)
+    var gunBarrel = this.createGunBarrel(this.scale);
     gunBarrel.name = "gunBarrel";
-    this.model.parts.gunBarrel = gunBarrel;
-    this.model.add(gunBarrel);
+    rightHandWithGun.add(gunBarrel);
 
-    var gunHandle = this.createGunHandle(this.scale)
+    var gunHandle = this.createGunHandle(this.scale);
     gunHandle.name = "gunHandle";
-    this.model.parts.gunHandle = gunHandle;
-    this.model.add(gunHandle);
+    rightHandWithGun.add(gunHandle);
 
-    this.model.parts.rightHand.rotation.x = 4.8;
+    this.model.add(rightHandWithGun);
+
+    rightHandWithGun.rotation.x = 4.8;
+    rightHandWithGun.rotation.z = 0.3;
+
+    var sizes = this.sizes;
+    var xPos = (sizes.armWidth/2) + (sizes.bodyWidth) * -1,
+        yPos = sizes.armHeight + sizes.bodyHeight - (sizes.armWidth/2),
+        zPos = 0;
+    rightHandWithGun.position.set(xPos * this.scale, yPos * this.scale, zPos * this.scale);
+
+    gunBarrel.rotateX(4.6);
+    gunBarrel.position.set(0, -10, 3);
+
+    gunHandle.rotateX(4.6);
+    gunHandle.position.set(0, -10, 1);
+
+    // if (this.options.debug == true) {
+      this.model.parts.head = head;
+      this.model.parts.leftLeg = leftLeg;
+      this.model.parts.torso = torso;
+      this.model.parts.rightLeg = rightLeg;
+      this.model.parts.leftHand = leftHand;
+      this.model.parts.rightHand = rightHand;
+      this.model.parts.gunBarrel = gunBarrel;
+      this.model.parts.gunHandle = gunHandle;
+      this.model.parts.rightHandWithGun = rightHandWithGun;
+    // }
     this.model.name = "character";
   };
 
@@ -155,11 +176,6 @@ class Player {
     var sizes = this.sizes;
     var obj = this.createHand(material, scale);
 
-    var xPos = (sizes.armWidth/2) + (sizes.bodyWidth) * -1,
-        yPos = sizes.armHeight + sizes.bodyHeight - (sizes.armWidth/2),
-        zPos = 0;
-    obj.position.set(xPos * scale, yPos * scale, zPos * scale);
-
     this.mapUv(obj, 0, 48, 12, 52,  0);  // right
     this.mapUv(obj, 1, 40, 12, 44,  0);  // left
     this.mapUv(obj, 2, 44, 16, 48, 12);  // top
@@ -243,8 +259,6 @@ class Player {
     );
 
     var obj = new THREE.Mesh(geometry, material);
-    obj.position.set(-6 * scale, 24 * scale, 10 * scale);
-
     return obj;
   }
 
@@ -259,7 +273,6 @@ class Player {
     var material = new THREE.MeshBasicMaterial({color: this.gunColor});
     var obj = new THREE.Mesh(geometry, material);
 
-    obj.position.set(-6 * scale, 22 * scale, 10 * scale);
     return(obj);
   }
 
