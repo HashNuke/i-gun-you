@@ -30,12 +30,8 @@ class World {
       this.scene.add(axisHelper);
     }
 
-    var light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1)
+    let light = new THREE.HemisphereLight(0xffffff, 0xffffff, 1)
     this.scene.add(light);
-
-    var l = new THREE.PointLight(0xffffff, 1, 0.5);
-    l.position.set(-0.6, 2.1, 1.5);
-    this.scene.add(l);
   }
 
 

@@ -25,56 +25,34 @@ class Player {
     this.model = new THREE.Object3D();
     this.model.parts = {};
 
-    var head = this.createHead(material, this.scale);
+    let head = this.createHead(material, this.scale);
     head.name = "head";
     this.model.add(head);
 
-    var torso = this.createTorso(material, this.scale);
+    let torso = this.createTorso(material, this.scale);
     torso.name = "torso";
     this.model.add(torso);
 
-    var leftLeg = this.createLeftLeg(material, this.scale);
+    let leftLeg = this.createLeftLeg(material, this.scale);
     leftLeg.name = "leftLeg";
     this.model.add(leftLeg);
 
-    var rightLeg = this.createRightLeg(material, this.scale);
+    let rightLeg = this.createRightLeg(material, this.scale);
     rightLeg.name = "rightLeg";
     this.model.add(rightLeg);
 
-    var leftHand = this.createLeftHand(material, this.scale);
+    let leftHand = this.createLeftHand(material, this.scale);
     leftHand.name = "leftHand";
     this.model.add(leftHand);
 
-    var rightHandWithGun = new THREE.Object3D();
-
-    var rightHand = this.createRightHand(material, this.scale);
-    rightHand.name = "rightHand";
-    rightHandWithGun.add(rightHand);
-
-    var gunBarrel = this.createGunBarrel(this.scale);
-    gunBarrel.name = "gunBarrel";
-    rightHandWithGun.add(gunBarrel);
-
-    var gunHandle = this.createGunHandle(this.scale);
-    gunHandle.name = "gunHandle";
-    rightHandWithGun.add(gunHandle);
-
+    let rightHandWithGun = this.createRightHandWithGun(material, this.scale);
+    rightLeg.name = "rightHandWithGun";
     this.model.add(rightHandWithGun);
 
-    rightHandWithGun.rotation.x = 4.8;
-    rightHandWithGun.rotation.z = 0.3;
 
-    var sizes = this.sizes;
-    var xPos = (sizes.armWidth/2) + (sizes.bodyWidth) * -1,
-        yPos = sizes.armHeight + sizes.bodyHeight - (sizes.armWidth/2),
-        zPos = 0;
-    rightHandWithGun.position.set(xPos * this.scale, yPos * this.scale, zPos * this.scale);
-
-    gunBarrel.rotateX(4.6);
-    gunBarrel.position.set(0, -10, 3);
-
-    gunHandle.rotateX(4.6);
-    gunHandle.position.set(0, -10, 1);
+    let blast = this.createBlast(this.scale);
+    blast.name = "blast";
+    this.model.add(blast);
 
     // if (this.options.debug == true) {
       this.model.parts.head = head;
@@ -82,10 +60,8 @@ class Player {
       this.model.parts.torso = torso;
       this.model.parts.rightLeg = rightLeg;
       this.model.parts.leftHand = leftHand;
-      this.model.parts.rightHand = rightHand;
-      this.model.parts.gunBarrel = gunBarrel;
-      this.model.parts.gunHandle = gunHandle;
       this.model.parts.rightHandWithGun = rightHandWithGun;
+      this.model.parts.blast = blast;
     // }
     this.model.name = "character";
   };
@@ -100,6 +76,21 @@ class Player {
     // move the legs
     this.model.parts.rightLeg.rotation.x = 1 * Math.cos(angle)
     this.model.parts.leftLeg.rotation.x = 1 * Math.cos(angle + Math.PI)
+  }
+
+
+  createBlast () {
+    let blastSize = 0.3 * this.scale;
+
+    let geometry1 = new THREE.BoxGeometry(blastSize, blastSize * 12, blastSize);
+    let geometry2 = new THREE.BoxGeometry(blastSize * 12, blastSize, blastSize);
+    geometry1.merge(geometry2);
+
+    let blastMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+    let blast = new THREE.Mesh(geometry1, blastMaterial);
+
+    blast.position.set(-2, 24, 14);
+    return blast;
   }
 
 
@@ -172,20 +163,6 @@ class Player {
   }
 
 
-  createRightHand(material, scale) {
-    var sizes = this.sizes;
-    var obj = this.createHand(material, scale);
-
-    this.mapUv(obj, 0, 48, 12, 52,  0);  // right
-    this.mapUv(obj, 1, 40, 12, 44,  0);  // left
-    this.mapUv(obj, 2, 44, 16, 48, 12);  // top
-    this.mapUv(obj, 3, 48, 16, 52, 12);  // bottom
-    this.mapUv(obj, 4, 44, 12, 48,  0);  // front
-    this.mapUv(obj, 5, 52, 12, 56,  0);  // back
-    return obj;
-  }
-
-
   createHand(material, scale) {
     var width  = this.sizes.armWidth * scale;
     var height = this.sizes.armHeight * scale;
@@ -247,6 +224,54 @@ class Player {
     var geometry = new THREE.BoxGeometry(width, height, depth, 1, 1, 1)
     geometry.applyMatrix( new THREE.Matrix4().makeTranslation(0, -height/2, 0) )
     return(new THREE.Mesh(geometry, material));
+  }
+
+
+  createRightHandWithGun(material, scale) {
+    let rightHandWithGun = new THREE.Object3D();
+
+    let rightHand = this.createRightHand(material, scale);
+    rightHand.name = "rightHand";
+    rightHandWithGun.add(rightHand);
+
+    let gunBarrel = this.createGunBarrel(scale);
+    gunBarrel.name = "gunBarrel";
+    rightHandWithGun.add(gunBarrel);
+
+    let gunHandle = this.createGunHandle(scale);
+    gunHandle.name = "gunHandle";
+    rightHandWithGun.add(gunHandle);
+
+    let sizes = this.sizes;
+    let xPos = (sizes.armWidth/2) + (sizes.bodyWidth) * -1,
+        yPos = sizes.armHeight + sizes.bodyHeight - (sizes.armWidth/2),
+        zPos = 0;
+    rightHandWithGun.position.set(xPos * scale, yPos * scale, zPos * scale);
+
+    gunBarrel.rotateX(4.6);
+    gunBarrel.position.set(0, -10, 3);
+
+    gunHandle.rotateX(4.6);
+    gunHandle.position.set(0, -10, 1);
+
+    rightHandWithGun.rotation.x = 4.8;
+    rightHandWithGun.rotation.z = 0.3;
+
+    return rightHandWithGun;
+  }
+
+
+  createRightHand(material, scale) {
+    var sizes = this.sizes;
+    var obj = this.createHand(material, scale);
+
+    this.mapUv(obj, 0, 48, 12, 52,  0);  // right
+    this.mapUv(obj, 1, 40, 12, 44,  0);  // left
+    this.mapUv(obj, 2, 44, 16, 48, 12);  // top
+    this.mapUv(obj, 3, 48, 16, 52, 12);  // bottom
+    this.mapUv(obj, 4, 44, 12, 48,  0);  // front
+    this.mapUv(obj, 5, 52, 12, 56,  0);  // back
+    return obj;
   }
 
 
