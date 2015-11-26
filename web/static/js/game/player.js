@@ -9,6 +9,7 @@ class Player {
       bodyWidth: 8, bodyHeight: 12, bodyDepth: 4,
       armWidth: 4, armHeight: 12, armDepth: 4
     };
+    this.gunColor = 0x111111;
 
     texture.magFilter  = THREE.NearestFilter
     texture.minFilter  = THREE.NearestFilter
@@ -238,7 +239,7 @@ class Player {
 
 
   createGunBarrel(scale) {
-    var material = new THREE.MeshBasicMaterial({color: 0xff0000});
+    var material = new THREE.MeshBasicMaterial({color: this.gunColor});
     var geometry = new THREE.BoxGeometry(
       2 * scale,
       2 * scale,
@@ -246,11 +247,7 @@ class Player {
     );
 
     var obj = new THREE.Mesh(geometry, material);
-    obj.position.set({
-      x: -5 * scale,
-      y: 24 * scale,
-      z: 12 * scale
-    });
+    obj.position.set(-6 * scale, 24 * scale, 10 * scale);
 
     return obj;
   }
@@ -263,15 +260,10 @@ class Player {
       2 * scale
     );
 
-    var material = new THREE.MeshBasicMaterial({color: 0xff0000});
+    var material = new THREE.MeshBasicMaterial({color: this.gunColor});
     var obj = new THREE.Mesh(geometry, material);
 
-    obj.position.set({
-      x: -5 * scale,
-      y: 22 * scale,
-      z: 10 * scale
-    });
-
+    obj.position.set(-6 * scale, 22 * scale, 10 * scale);
     return(obj);
   }
 
