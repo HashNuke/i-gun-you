@@ -23,6 +23,7 @@ import "deps/phoenix_html/web/static/js/phoenix_html"
 import Game   from "./game"
 import World  from "./game/world"
 import Player from "./game/player"
+import FlyControls from "../patched/FlyControls"
 
 window.onload = function() {
 
