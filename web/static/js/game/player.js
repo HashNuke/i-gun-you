@@ -1,7 +1,6 @@
 class Player {
 
   constructor(texture, scale=1) {
-    texture;
     this.scale = scale;
 
     this.sizes = {
@@ -14,12 +13,9 @@ class Player {
     texture.magFilter  = THREE.NearestFilter
     texture.minFilter  = THREE.NearestFilter
 
-    var material = new THREE.MeshLambertMaterial({
-      map: texture
-      // side: THREE.DoubleSide
-    });
-
+    var material = new THREE.MeshLambertMaterial({map: texture});
     this.createModel(material);
+
     return this;
   }
 
