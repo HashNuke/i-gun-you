@@ -29,7 +29,7 @@ window.onload = function() {
   // get player skin here
   var textureLoader = new THREE.TextureLoader();
   textureLoader.load("/images/captainamerica.png", (texture)=> {
-    var player = new Player(texture, 0.5);
+    var player = new Player(texture, 1);
     window.game = new Game(player);
     window.world = new World(game, {debug: true});
   });
