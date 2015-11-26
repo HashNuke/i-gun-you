@@ -4,14 +4,18 @@ class World {
     this.options = options;
     this.game = game;
 
+    // TODO make scale a universal property
+    this.scale = this.game.player.scale;
+
     this.clock = new THREE.Clock();
 
     this.setupCamera();
     this.setupRenderer();
     this.setupScene();
 
-    this.camera.position.z = 100;
-    this.camera.position.y = 20;
+    this.camera.position.z = -4 * this.scale;
+    this.camera.position.y = 28 * this.scale;
+    this.camera.rotation.set(0,Math.PI,0);
 
     this.controls = new THREE.FlyControls(this.camera, {centralObject: this.game.player.model});
     this.controls.domElement = this.renderer.domElement;
@@ -33,6 +37,7 @@ class World {
 
     this.scene.add(this.cube);
     this.scene.add(this.game.player.model);
+    this.game.player.model.rotation.set(0, Math.PI, 0);
 
     if (this.options.debug == true) {
       var axisHelper = new THREE.AxisHelper(10);
