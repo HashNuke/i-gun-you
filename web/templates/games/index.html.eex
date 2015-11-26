@@ -3,9 +3,8 @@
 
   <%= form_for @game_changeset, games_path(@conn, :create), fn f -> %>
     <label>
-      <%= checkbox f, :private %> Do you want your game to be private?
+      <%= checkbox f, :private %> Private game? (friends only)
     </label>
-    Only users with the link can join private games.
 
     <%= submit "Create a game" %>
   <% end %>
