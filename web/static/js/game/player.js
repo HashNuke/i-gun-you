@@ -67,8 +67,9 @@ class Player {
   };
 
 
-  update(now) {
-    var angle = (0.001) * now*Math.PI*2
+  update(delta) {
+    let now = new Date()
+    var angle = 0.001 * now*Math.PI*2
 
     // move the left arm
     this.model.parts.leftHand.rotation.x = 1 * Math.cos(angle)
