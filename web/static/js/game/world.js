@@ -9,6 +9,7 @@ class World {
     this.setupScene();
 
     this.camera.position.z = 50;
+    this.camera.position.y = 20;
 
     this.animate();
   }
