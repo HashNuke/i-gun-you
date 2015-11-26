@@ -1,13 +1,15 @@
 /**
- * @author James Baicoianu / http://www.baicoianu.com/
+ * Original author of THREE.FlyControls: James Baicoianu <http://www.baicoianu.com>
  */
 
-THREE.FlyControls = function ( object, domElement ) {
+console.log("controls loaded");
+THREE.FlyControls = function ( object, options ) {
 
 	this.object = object;
+	this.centralObject = options.centralObject;
 
-	this.domElement = ( domElement !== undefined ) ? domElement : document;
-	if ( domElement ) this.domElement.setAttribute( 'tabindex', - 1 );
+	this.domElement = ( options.domElement !== undefined ) ? options.domElement : document;
+	if ( options.domElement ) this.domElement.setAttribute( 'tabindex', - 1 );
 
 	// API
 
@@ -59,17 +61,20 @@ THREE.FlyControls = function ( object, domElement ) {
 			case 65: /*A*/ this.moveState.left = 1; break;
 			case 68: /*D*/ this.moveState.right = 1; break;
 
-			case 82: /*R*/ this.moveState.up = 1; break;
-			case 70: /*F*/ this.moveState.down = 1; break;
+			// NOTE: Disable
+			// case 82: /*R*/ this.moveState.up = 1; break;
+			// case 70: /*F*/ this.moveState.down = 1; break;
 
-			case 38: /*up*/ this.moveState.pitchUp = 1; break;
-			case 40: /*down*/ this.moveState.pitchDown = 1; break;
+			// NOTE: Disable up and down
+			// case 38: /*up*/ this.moveState.pitchUp = 1; break;
+			// case 40: /*down*/ this.moveState.pitchDown = 1; break;
 
 			case 37: /*left*/ this.moveState.yawLeft = 1; break;
 			case 39: /*right*/ this.moveState.yawRight = 1; break;
 
-			case 81: /*Q*/ this.moveState.rollLeft = 1; break;
-			case 69: /*E*/ this.moveState.rollRight = 1; break;
+			// NOTE: Disabled rolling
+			// case 81: /*Q*/ this.moveState.rollLeft = 1; break;
+			// case 69: /*E*/ this.moveState.rollRight = 1; break;
 
 		}
 
@@ -90,17 +95,20 @@ THREE.FlyControls = function ( object, domElement ) {
 			case 65: /*A*/ this.moveState.left = 0; break;
 			case 68: /*D*/ this.moveState.right = 0; break;
 
-			case 82: /*R*/ this.moveState.up = 0; break;
-			case 70: /*F*/ this.moveState.down = 0; break;
+			// NOTE: Disable
+			// case 82: /*R*/ this.moveState.up = 0; break;
+			// case 70: /*F*/ this.moveState.down = 0; break;
 
-			case 38: /*up*/ this.moveState.pitchUp = 0; break;
-			case 40: /*down*/ this.moveState.pitchDown = 0; break;
+			// NOTE: Disable up and down
+			// case 38: /*up*/ this.moveState.pitchUp = 0; break;
+			// case 40: /*down*/ this.moveState.pitchDown = 0; break;
 
 			case 37: /*left*/ this.moveState.yawLeft = 0; break;
 			case 39: /*right*/ this.moveState.yawRight = 0; break;
 
-			case 81: /*Q*/ this.moveState.rollLeft = 0; break;
-			case 69: /*E*/ this.moveState.rollRight = 0; break;
+			// NOTE: Disabled rolling
+			// case 81: /*Q*/ this.moveState.rollLeft = 0; break;
+			// case 69: /*E*/ this.moveState.rollRight = 0; break;
 
 		}
 
@@ -148,7 +156,9 @@ THREE.FlyControls = function ( object, domElement ) {
 			var halfHeight = container.size[ 1 ] / 2;
 
 			this.moveState.yawLeft   = - ( ( event.pageX - container.offset[ 0 ] ) - halfWidth  ) / halfWidth;
-			this.moveState.pitchDown =   ( ( event.pageY - container.offset[ 1 ] ) - halfHeight ) / halfHeight;
+
+			// NOTE: Disable pitch down and up
+			// this.moveState.pitchDown =   ( ( event.pageY - container.offset[ 1 ] ) - halfHeight ) / halfHeight;
 
 			this.updateRotationVector();
 
@@ -193,12 +203,18 @@ THREE.FlyControls = function ( object, domElement ) {
 		this.object.translateY( this.moveVector.y * moveMult );
 		this.object.translateZ( this.moveVector.z * moveMult );
 
-		this.tmpQuaternion.set( this.rotationVector.x * rotMult, this.rotationVector.y * rotMult, this.rotationVector.z * rotMult, 1 ).normalize();
-		this.object.quaternion.multiply( this.tmpQuaternion );
+		// NOTE: use this for A/D turning key
+		// this.tmpQuaternion.set(
+		// 	this.rotationVector.x * rotMult,
+		// 	0,
+		// 	this.rotationVector.z * rotMult,
+		// 	1
+		// ).normalize();
+
+		this.centralObject.rotation.set(0, Math.PI * (this.moveState.yawLeft/2) , 0);
 
 		// expose the rotation vector for convenience
-		this.object.rotation.setFromQuaternion( this.object.quaternion, this.object.rotation.order );
-
+		//this.centralObject.rotation.setFromQuaternion( this.centralObject.quaternion, this.centralObject.rotation.order );
 
 	};
 
