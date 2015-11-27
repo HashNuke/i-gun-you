@@ -3,14 +3,13 @@
  */
 
 console.log("controls loaded");
-THREE.FlyControls = function ( follower, target, options ) {
+THREE.FlyControls = function ( camera, options ) {
 
 	if (options === undefined) {
 		var options = {};
 	}
 
-	this.follower = follower;
-	this.target = target;
+	this.camera = camera;
 
 	this.domElement = ( options.domElement !== undefined ) ? options.domElement : document;
 	if ( options.domElement ) this.domElement.setAttribute( 'tabindex', - 1 );
@@ -201,9 +200,9 @@ THREE.FlyControls = function ( follower, target, options ) {
 		var moveMult = delta * this.movementSpeed;
 		var rotMult = delta * this.rollSpeed;
 
-		this.follower.translateX( this.moveVector.x * moveMult );
-		this.follower.translateY( this.moveVector.y * moveMult );
-		this.follower.translateZ( this.moveVector.z * moveMult );
+		this.camera.translateX( this.moveVector.x * moveMult );
+		this.camera.translateY( this.moveVector.y * moveMult );
+		this.camera.translateZ( this.moveVector.z * moveMult );
 
 		// NOTE: use this for A/D turning key
 		// this.tmpQuaternion.set(
@@ -213,8 +212,8 @@ THREE.FlyControls = function ( follower, target, options ) {
 		// 	1
 		// ).normalize();
 
-		this.follower.rotation.set(0, Math.PI * (this.moveState.yawLeft/2) , 0);
-		this.target.rotation.set(0, Math.PI * (this.moveState.yawLeft/2) , 0);
+		this.camera.rotation.set(0, Math.PI * (this.moveState.yawLeft/2) , 0);
+		//this.target.rotation.set(0, Math.PI * (this.moveState.yawLeft/2) , 0);
 
 		// expose the rotation vector for convenience
 		//this.target.rotation.setFromQuaternion( this.target.quaternion, this.target.rotation.order );
