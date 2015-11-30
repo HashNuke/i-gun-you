@@ -15,9 +15,9 @@ class World {
 
     this.camera.position.z = -4 * this.scale;
     this.camera.position.y = 28 * this.scale;
-    this.camera.rotation.set(0,Math.PI,0);
+    this.game.player.model.rotation.set(0, Math.PI/2, 0);
 
-    this.controls = new THREE.FlyControls(this.camera, {centralObject: this.game.player.model});
+    this.controls = new THREE.FlyControls(this.game.player.model);
     this.controls.domElement = this.renderer.domElement;
 		this.controls.movementSpeed = 10;
 		this.controls.rollSpeed = Math.PI / 6;
@@ -40,7 +40,7 @@ class World {
     this.game.player.model.rotation.set(0, Math.PI, 0);
 
     if (this.options.debug == true) {
-      var axisHelper = new THREE.AxisHelper(10);
+      var axisHelper = new THREE.AxisHelper(100);
       this.scene.add(axisHelper);
     }
 
@@ -70,6 +70,10 @@ class World {
     // this.cube.rotation.y += 0.05;
 
     this.controls.update(delta);
+    let playerRotation = this.game.player.model.rotation
+    let playerPos = this.game.player.model.position
+    this.camera.rotation.set(playerRotation.x, playerRotation.y, playerRotation.z)
+    this.camera.position.set(playerPos.x, playerPos.y + (20 * this.scale), playerPos.z+50)
 
     // TODO do only if player not dead
     this.game.player.update(delta);
